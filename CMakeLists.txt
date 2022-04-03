@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(SORT_ALGORITHMS)
+project(GRAFS)
 
 set(EXECUTABLE ${CMAKE_PROJECT_NAME}_run)
 

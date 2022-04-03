@@ -1,5 +1,4 @@
-#ifndef TIMER_H
-#define TIMER_H
+#pragma once
 
 #include <iostream>
 #include <memory>
@@ -39,5 +38,3 @@ class Benchmark
         }
     
 };
-
-#endif //TIMER_H
