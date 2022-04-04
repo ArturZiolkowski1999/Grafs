@@ -22,9 +22,8 @@ public:
 };
 
 class Linkedlist {
-private:
-    Edge *head;
 public:
+    Edge *head;
     Linkedlist(){this->head = nullptr; };
     void push(unsigned int vertex, unsigned int weight);
     friend std::ostream &operator<<(std::ostream &ost, Linkedlist &list);

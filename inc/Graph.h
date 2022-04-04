@@ -7,6 +7,7 @@
 #include <time.h>  // time
 #include <stdexcept> // invalid_argument
 
+#include "PriorityQueue.h"
 #include "List.h"
 
 template <unsigned int vertices>
@@ -19,7 +20,8 @@ private:
     unsigned int min_distance(std::array<unsigned int, vertices> &distance, std::array<bool, vertices> &Tset);
 public:
     Graph(unsigned int density = 0);
-    std::array<unsigned int, vertices> dijkstra_algorithm(unsigned int vertex);
+    std::array<unsigned int, vertices> dijkstra_algorithm_matrix_repr(unsigned int vertex);
+    std::array<unsigned int, vertices> dijkstra_algorithm_list_repr(unsigned int vertex);
     void reshuffle(unsigned int density = 0);
 
     void print_adjacency_list();
@@ -63,7 +65,7 @@ void Graph<vertices>::reshuffle(unsigned int density) {
     // fill edges with not empty value
     for (int index = 0; index < vertices*vertices; ++index){
         if(index/vertices != index%vertices){
-            this->edge_weight_matrix[index] = std::rand() % 10 + 1;
+            this->edge_weight_matrix[index] = std::rand() % 999 + 1;
         }else {
             this->edge_weight_matrix[index] = 0;
         }
@@ -118,7 +120,7 @@ void Graph<vertices>::print_adjacency_list() {
 }
 
 template<unsigned int vertices>
-std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm(unsigned int vertex){
+std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm_matrix_repr(unsigned int vertex){
     std::array<unsigned int, vertices> distance;
     std::array<bool, vertices> Tset;
 
@@ -141,6 +143,7 @@ std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm(unsigned 
     }
 
 
+    //Display should not be there, but im lazy
     std::cout << "Vertex :" << vertex << std::endl;
     for(int k = 0; k < vertices; ++k){
         std::cout <<"Distance from vertex " << k << " Is:" << distance[k] <<std::endl;
@@ -160,4 +163,56 @@ unsigned int Graph<vertices>::min_distance(std::array<unsigned int, vertices> &d
         }
     }
     return ind;
+}
+
+template<unsigned int vertices>
+std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm_list_repr(unsigned int vertex){
+    
+    unsigned int distance[vertices];
+
+    PriorityQueue* min_heap = new PriorityQueue(vertices);
+
+    for(int v = 0; v < vertices; ++v){
+        distance[v] = INT_MAX;
+        min_heap->array[v] = new PriorityQueueNode(v, distance[v]);
+
+        min_heap->pos[v] = v;
+    }
+
+    min_heap->array[vertex] = new PriorityQueueNode(vertex, distance[vertex]);
+    min_heap->pos[vertex] = vertex;
+    distance[vertex] = 0;
+    min_heap->decrease_key(vertex, distance[vertex]);
+
+    min_heap->size = vertices;
+
+    while(!min_heap->is_empty()){
+        PriorityQueueNode* min_heap_node = min_heap->extract_min();
+
+        unsigned int u = min_heap_node->vertex;
+
+        Edge * pCrawl = this->adjacency_list_matrix[u].head;
+
+        while(pCrawl != NULL){
+            unsigned int v = pCrawl->vertex;
+
+            if(min_heap->is_in_queue(v) && distance[u] != INT_MAX 
+                && pCrawl->weight + distance[u] < distance[v]){
+                    distance[v] = distance[u] + pCrawl->weight;
+
+                    min_heap->decrease_key(v, distance[v]);
+                }
+                pCrawl = pCrawl->next;
+        }
+    }
+    min_heap->print_solution(distance, vertices);
+
+    // gowno kod alert !!!
+    std::array<unsigned int, vertices> result;
+    for (int i = 0; i < vertices; ++i){
+        result[i]= distance[i];
+    }
+    // koniec alertu
+
+    return result;
 }
