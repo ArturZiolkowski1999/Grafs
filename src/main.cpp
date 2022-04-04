@@ -4,7 +4,8 @@
 #include "List.h"
 
 int main() {
-    Graph<9> graph(50);
+    Graph<5> graph(100);
     std::cout << graph << std::endl;
     graph.print_adjacency_list();
+    graph.dijkstra_algorithm(1);
 }

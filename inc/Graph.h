@@ -16,11 +16,13 @@ private:
     std::array<int, vertices * vertices> edge_weight_matrix;
     unsigned int density;
     void create_adjacency_list();
+    unsigned int min_distance(std::array<unsigned int, vertices> &distance, std::array<bool, vertices> &Tset);
 public:
     Graph(unsigned int density = 0);
+    std::array<unsigned int, vertices> dijkstra_algorithm(unsigned int vertex);
     void reshuffle(unsigned int density = 0);
-    void print_adjacency_list();
 
+    void print_adjacency_list();
     template<unsigned int vertices1>
     friend std::ostream &operator<<(std::ostream &ost, Graph<vertices1> &graph);
 };
@@ -113,4 +115,49 @@ void Graph<vertices>::print_adjacency_list() {
         std::cout << "vertices:" << row << "-> ";
         std::cout << this->adjacency_list_matrix[row] << std::endl;
     }
+}
+
+template<unsigned int vertices>
+std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm(unsigned int vertex){
+    std::array<unsigned int, vertices> distance;
+    std::array<bool, vertices> Tset;
+
+    for(int v = 0; v < vertices; ++v){
+        distance[v] = INT_MAX;
+        Tset[v] = false;
+    }
+
+    distance[vertex] = 0;
+
+    for(int i = 0; i < vertices; ++i){
+        unsigned int nearest = this->min_distance(distance, Tset);
+        Tset[nearest] = true;
+        for(int j = 0; j < vertices; ++j){
+            if(!Tset[j] && this->edge_weight_matrix[vertices*nearest+j] && distance[nearest] != INT_MAX
+                && distance[nearest] + this->edge_weight_matrix[vertices*nearest+j] < distance[j]){
+                    distance[j] = distance[nearest] + this->edge_weight_matrix[vertices*nearest+j];
+                }
+        }
+    }
+
+
+    std::cout << "Vertex :" << vertex << std::endl;
+    for(int k = 0; k < vertices; ++k){
+        std::cout <<"Distance from vertex " << k << " Is:" << distance[k] <<std::endl;
+    }
+
+    return distance;
+}
+
+template<unsigned int vertices>
+unsigned int Graph<vertices>::min_distance(std::array<unsigned int, vertices> &distance, std::array<bool, vertices> &Tset){
+    unsigned int minimum = INT_MAX,ind;
+
+    for(int i = 0; i<vertices; ++i){
+        if(Tset[i] == false & distance[i] <= minimum){
+            minimum = distance[i];
+            ind = i;
+        }
+    }
+    return ind;
 }
