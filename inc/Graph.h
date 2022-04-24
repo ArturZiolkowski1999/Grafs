@@ -144,10 +144,11 @@ std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm_matrix_re
 
 
     //Display should not be there, but im lazy
-    std::cout << "Vertex :" << vertex << std::endl;
-    for(int k = 0; k < vertices; ++k){
-        std::cout <<"Distance from vertex " << k << " Is:" << distance[k] <<std::endl;
-    }
+    // Uncoment for printing reasult
+    // std::cout << "Vertex :" << vertex << std::endl;
+    // for(int k = 0; k < vertices; ++k){
+    //     std::cout <<"Distance from vertex " << k << " Is:" << distance[k] <<std::endl;
+    // }
 
     return distance;
 }
@@ -205,7 +206,8 @@ std::array<unsigned int, vertices> Graph<vertices>::dijkstra_algorithm_list_repr
                 pCrawl = pCrawl->next;
         }
     }
-    min_heap->print_solution(distance, vertices);
+    // Uncoment for printing reasult //
+    // min_heap->print_solution(distance, vertices);
 
     // gowno kod alert !!!
     std::array<unsigned int, vertices> result;
